@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.alibaba.fastjson2:fastjson2:2.0.1'
+    implementation 'com.dslplatform:dsl-json:1.9.9'
+    implementation 'com.dslplatform:dsl-json-java8:1.9.9'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
+    implementation 'com.fasterxml.jackson.module:jackson-module-afterburner:2.13.2'
+    implementation 'com.jsoniter:jsoniter:0.9.23'
+    implementation 'org.javassist:javassist:3.28.0-GA'
+    implementation fileTree(dir: 'lib', include: ['jason.jar'])
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task clearJar(type: Delete) {
+    delete 'out'
+}
+
+task copyJar(type: Copy) {
+    from configurations.runtimeClasspath
+    into 'out'
+}
