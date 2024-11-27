@@ -1,9 +1,12 @@
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.util.DoubleToDecimal;
 import com.dslplatform.json.DslJson;
 import com.dslplatform.json.NumberConverter;
 import com.dslplatform.json.runtime.Settings;
+import io.github.wycst.wast.json.JSONWriter;
 import jason.JsonReader;
 import jason.JsonWriter;
 
@@ -36,6 +39,30 @@ public class NumberBenchmark {
 		System.out.format("     JDKWriter: %d (%d ms)%n", n, (System.nanoTime() - t) / 1_000_000); // 660000000
 	}
 
+	public static void testJason() {
+		var jr = new JsonReader();
+		var r = 0.0;
+		var t = System.nanoTime();
+		for (int i = 0; i < 10_000_000; i++) {
+			for (int j = 0; j < 8; j++)
+				r += jr.buf(testBytes[j]).parseDouble();
+		}
+		System.out.format("   JasonReader: %15.6f (%d ms)%n", r, (System.nanoTime() - t) / 1_000_000); // 624694507922444.400000
+
+		var jw = new JsonWriter();
+		var n = 0L;
+		t = System.nanoTime();
+		for (int i = 0; i < 10_000_000; i++) {
+			for (int j = 0; j < 8; j++) {
+//				n += Double.toString(tests[j]).length();
+				jw.clear().write(testNums[j]);
+				n += jw.size();
+//				System.out.println(new String(jw.buf, 0, jw.pos));
+			}
+		}
+		System.out.format("   JasonWriter: %d (%d ms)%n", n, (System.nanoTime() - t) / 1_000_000); // 660000000
+	}
+
 	public static void testFastJson() {
 		var r = 0.0;
 
@@ -57,6 +84,32 @@ public class NumberBenchmark {
 				n += DoubleToDecimal.toString(testNums[j], buf, 0, false);
 		}
 		System.out.format("FastJsonWriter: %d (%d ms)%n", n, (System.nanoTime() - t) / 1_000_000); // 660000000
+	}
+
+	private static final MethodHandle mhWriteDouble; // static int writeDouble(double doubleValue, byte[] buf, int off)
+
+	static {
+		try {
+			var m = JSONWriter.class.getDeclaredMethod("writeDouble", double.class, byte[].class, int.class);
+			m.setAccessible(true);
+			mhWriteDouble = MethodHandles.lookup().unreflect(m);
+		} catch (ReflectiveOperationException e) {
+			throw new AssertionError(e);
+		}
+	}
+
+	public static void testWast() throws Throwable {
+		var buf = new byte[32];
+		var n = 0L;
+		var t = System.nanoTime();
+		for (int i = 0; i < 10_000_000; i++) {
+			for (int j = 0; j < 8; j++) {
+//				n += Double.toString(tests[j]).length();
+				n += (int)mhWriteDouble.invoke(testNums[j], buf, 0);
+//				System.out.println(new String(jw.buf, 0, jw.pos));
+			}
+		}
+		System.out.format("    WastWriter: %d (%d ms)%n", n, (System.nanoTime() - t) / 1_000_000); // 660000000
 	}
 
 	public static void testDslJson() throws IOException {
@@ -85,34 +138,13 @@ public class NumberBenchmark {
 		System.out.format(" DslJsonWriter: %d (%d ms)%n", n, (System.nanoTime() - t) / 1_000_000); // 660000000
 	}
 
-	public static void testJason() {
-		var jr = new JsonReader();
-		var r = 0.0;
-		var t = System.nanoTime();
-		for (int i = 0; i < 10_000_000; i++) {
-			for (int j = 0; j < 8; j++)
-				r += jr.buf(testBytes[j]).parseDouble();
+	public static void main(String[] args) throws Throwable {
+		for (int i = 0; i < 5; i++) {
+			testJDK();
+			testJason();
+			testFastJson();
+			testWast();
+			testDslJson();
 		}
-		System.out.format("   JasonReader: %15.6f (%d ms)%n", r, (System.nanoTime() - t) / 1_000_000); // 624694507922444.400000
-
-		var jw = new JsonWriter();
-		var n = 0L;
-		t = System.nanoTime();
-		for (int i = 0; i < 10_000_000; i++) {
-			for (int j = 0; j < 8; j++) {
-//				n += Double.toString(tests[j]).length();
-				jw.clear().write(testNums[j]);
-				n += jw.size();
-//				System.out.println(new String(jw.buf, 0, jw.pos));
-			}
-		}
-		System.out.format("   JasonWriter: %d (%d ms)%n", n, (System.nanoTime() - t) / 1_000_000); // 660000000
-	}
-
-	public static void main(String[] args) throws IOException {
-		testJDK();
-		testFastJson();
-		testDslJson();
-		testJason();
 	}
 }
