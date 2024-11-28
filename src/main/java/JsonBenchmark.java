@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.jsoniter.JsonIterator;
 import com.jsoniter.spi.DecodingMode;
 import jason.JsonReader;
+import org.simdjson.SimdJsonParser;
 
 // --add-opens java.base/java.lang=ALL-UNNAMED -Xms1g -Xmx1g -Xmn256m
 public class JsonBenchmark {
@@ -37,8 +38,7 @@ public class JsonBenchmark {
 	static void testFastJson() { // fastjson2-2.0.53.jar大小1.98MB
 		long t = System.nanoTime(), v = 0;
 		for (int i = 0; i < TEST_COUNT; ++i) {
-			// C c = JSON.parseObject(bytes, C.class);
-			C c = JSON.parseObject(str, C.class); // 只有FastJson使用String输入比byte[]性能更高
+			C c = JSON.parseObject(bytes, C.class);
 			v += c.a + c.c.a;
 		}
 		System.out.println("FastJson: " + v + ", " + (System.nanoTime() - t) / 1_000_000 + "ms");
@@ -51,6 +51,17 @@ public class JsonBenchmark {
 			v += c.a + c.c.a;
 		}
 		System.out.println("    Wast: " + v + ", " + (System.nanoTime() - t) / 1_000_000 + "ms");
+	}
+
+	@SuppressWarnings("unused")
+	static void testSimdJson() { // simdjson-java-0.3.0.jar大小99KB
+		long t = System.nanoTime(), v = 0;
+		SimdJsonParser parser = new SimdJsonParser();
+		for (int i = 0; i < TEST_COUNT; ++i) {
+			C c = parser.parse(bytes, bytes.length, C.class);
+			v += c.a + c.c.a;
+		}
+		System.out.println("SimdJson: " + v + ", " + (System.nanoTime() - t) / 1_000_000 + "ms");
 	}
 
 	static void testJsoniter() { // jsoniter-0.9.23.jar和javassist-3.30.2-GA.jar总大小1.09MB
@@ -100,6 +111,10 @@ public class JsonBenchmark {
 			testWast();
 		System.gc();
 		Thread.sleep(1000);
+//		for (int i = 0; i < 5; ++i)
+//			testSimdJson();
+//		System.gc();
+//		Thread.sleep(1000);
 		for (int i = 0; i < 5; ++i)
 			testJsoniter();
 		System.gc();
