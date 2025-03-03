@@ -127,10 +127,10 @@ public class JsonBenchmark {
 			testJackson();
 	}
 }
-// OpenJDK 23.0.1
-//    Jason: 5790000000, 861ms
-// FastJson: 5790000000, 1149ms
-//     Wast: 5790000000, 1259ms
-// Jsoniter: 5790000000, 1243ms
-// Dsl-Json: 5790000000, 2705ms
-//  Jackson: 5790000000, 3887ms
+// OpenJDK 23.0.2
+//    Jason: 5790000000, 915ms
+// FastJson: 5790000000, 1148ms
+//     Wast: 5790000000, 1119ms
+// Jsoniter: 5790000000, 1099ms
+// Dsl-Json: 5790000000, 2581ms
+//  Jackson: 5790000000, 3969ms

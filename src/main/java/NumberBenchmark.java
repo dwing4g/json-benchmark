@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import com.alibaba.fastjson2.JSONReader;
-import com.alibaba.fastjson2.util.DoubleToDecimal;
 import com.dslplatform.json.DslJson;
 import com.dslplatform.json.NumberConverter;
 import com.dslplatform.json.runtime.Settings;
@@ -85,7 +84,7 @@ public class NumberBenchmark {
 		t = System.nanoTime();
 		for (int i = 0; i < 10_000_000; i++) {
 			for (int j = 0; j < 8; j++)
-				n += DoubleToDecimal.toString(testNums[j], buf, 0, false);
+				n += com.alibaba.fastjson2.util.NumberUtils.writeDouble(buf, 0, testNums[j], false);
 		}
 		System.out.format("FastJsonWriter: %d (%d ms)%n", n, (System.nanoTime() - t) / 1_000_000); // 660000000
 	}
@@ -288,3 +287,15 @@ public class NumberBenchmark {
 		}
 	}
 }
+// OpenJDK 23.0.2
+//      JDKReader: 624694507922444.400000 (1842 ms)
+//      JDKWriter: 680000000 (3631 ms)
+//    JasonReader: 624694507922444.400000 (1135 ms)
+//    JasonWriter: 660000000 (2689 ms)
+// FastJsonReader: 624694507922444.400000 (2350 ms)
+// FastJsonWriter: 680000000 (2059 ms)
+//     WastReader: 624694507922444.400000 (1277 ms)
+//     WastWriter: 680000000 (1885 ms)
+// SimdJsonReader: 624694507922444.400000 (1423 ms)
+//  DslJsonReader: 624694507922444.400000 (1750 ms)
+//  DslJsonWriter: 660000000 (5968 ms)
