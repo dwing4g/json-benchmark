@@ -35,8 +35,8 @@ compileJava {
 }
 
 dependencies {
-    implementation 'io.github.wycst:wast:0.0.25'
-    implementation 'com.alibaba.fastjson2:fastjson2:2.0.56'
+    implementation 'io.github.wycst:wast:0.0.26'
+    implementation 'com.alibaba.fastjson2:fastjson2:2.0.57'
     implementation 'com.dslplatform:dsl-json:2.0.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.3'
     implementation 'com.fasterxml.jackson.module:jackson-module-afterburner:2.18.3'
