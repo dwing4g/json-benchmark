@@ -287,15 +287,15 @@ public class NumberBenchmark {
 		}
 	}
 }
-// OpenJDK 24
-//      JDKReader: 624694507922444.400000 (1935 ms)
-//      JDKWriter: 680000000 (2991 ms)
-//    JasonReader: 624694507922444.400000 (1147 ms)
-//    JasonWriter: 660000000 (2662 ms)
-// FastJsonReader: 624694507922444.400000 (2362 ms)
-// FastJsonWriter: 680000000 (1994 ms)
-//     WastReader: 624694507922444.400000 (1293 ms)
-//     WastWriter: 680000000 (1875 ms)
-// SimdJsonReader: 624694507922444.400000 (1408 ms)
-//  DslJsonReader: 624694507922444.400000 (1778 ms)
-//  DslJsonWriter: 660000000 (5972 ms)
+// OpenJDK 25
+//      JDKReader: 624694507922444.400000 (2680 ms)
+//      JDKWriter: 680000000 (3051 ms)
+//    JasonReader: 624694507922444.400000 (1145 ms)
+//    JasonWriter: 660000000 (2688 ms)
+// FastJsonReader: 624694507922444.400000 (2291 ms)
+// FastJsonWriter: 680000000 (2079 ms)
+//     WastReader: 624694507922444.400000 (1263 ms)
+//     WastWriter: 680000000 (1884 ms)
+// SimdJsonReader: 624694507922444.400000 (1390 ms)
+//  DslJsonReader: 624694507922444.400000 (1804 ms)
+//  DslJsonWriter: 660000000 (6069 ms)
