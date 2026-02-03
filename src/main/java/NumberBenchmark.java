@@ -248,7 +248,7 @@ public class NumberBenchmark {
 		System.out.format(" DslJsonWriter: %d (%d ms)%n", n, (System.nanoTime() - t) / 1_000_000); // 660000000
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "unused", "UnnecessaryModifier", "RedundantSuppression"})
 	public static void main1(String[] args) {
 //		double d = -7.936565429908449E-131;
 //		String s = Double.toString(d);
@@ -260,12 +260,13 @@ public class NumberBenchmark {
 //		System.out.println(d1 == d2); // 输出: false
 
 		final ThreadLocalRandom r = ThreadLocalRandom.current();
-		for (int i = 0; i < 10000000; i++) {
+		for (int i = 0; i < 1_0000_0000; i++) {
 			long v;
 			do
 				v = r.nextLong();
 			while ((v & 0x7ff0000000000000L) == 0x7ff0000000000000L); // 排除Infinity,NaN
 			double d = Double.longBitsToDouble(v);
+			//noinspection SequencedCollectionMethodCanBeUsed
 			double d1 = ((List<? extends Number>)io.github.wycst.wast.json.JSON.parse("[" + d + "]")).get(0).doubleValue();
 			if (d != d1)
 				throw new AssertionError("testRandomWastParser[" + i + "]: " + d + " != " + d1);
@@ -273,6 +274,7 @@ public class NumberBenchmark {
 		System.out.println("testRandomWastParser OK!");
 	}
 
+	@SuppressWarnings({"UnnecessaryModifier", "unused", "RedundantSuppression"})
 	public static void main(String[] args) throws Throwable {
 		testRandomWastParser();
 		// testRandomSimdJsonParser();
@@ -288,14 +290,14 @@ public class NumberBenchmark {
 	}
 }
 // OpenJDK 25
-//      JDKReader: 624694507922444.400000 (2680 ms)
-//      JDKWriter: 680000000 (3051 ms)
-//    JasonReader: 624694507922444.400000 (1145 ms)
-//    JasonWriter: 660000000 (2688 ms)
-// FastJsonReader: 624694507922444.400000 (2291 ms)
-// FastJsonWriter: 680000000 (2079 ms)
-//     WastReader: 624694507922444.400000 (1263 ms)
-//     WastWriter: 680000000 (1884 ms)
-// SimdJsonReader: 624694507922444.400000 (1390 ms)
-//  DslJsonReader: 624694507922444.400000 (1804 ms)
-//  DslJsonWriter: 660000000 (6069 ms)
+//      JDKReader: 624694507922444.400000 (2624 ms)
+//      JDKWriter: 680000000 (2778 ms)
+//    JasonReader: 624694507922444.400000 (1153 ms)
+//    JasonWriter: 660000000 (2693 ms)
+// FastJsonReader: 624694507922444.400000 (2301 ms)
+// FastJsonWriter: 680000000 (2016 ms)
+//     WastReader: 624694507922444.400000 (1143 ms)
+//     WastWriter: 680000000 (1907 ms)
+// SimdJsonReader: 624694507922444.400000 (1413 ms)
+//  DslJsonReader: 624694507922444.400000 (1810 ms)
+//  DslJsonWriter: 660000000 (6022 ms)
